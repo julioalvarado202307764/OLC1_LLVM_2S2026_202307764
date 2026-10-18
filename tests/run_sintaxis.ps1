@@ -55,7 +55,7 @@ function Registrar([string]$Id, [string]$Desc, [bool]$Ok, [string]$Detalle) {
     }
 }
 
-$exito = "Analisis sintactico exitoso."
+$exito = "Analisis sintactico exitoso.`nAnalisis semantico exitoso."
 $fallo = "Analisis fallido: 1 error(es)."
 
 # Cada caso: Id, descripcion, fuente, codigo de salida esperado, stdout esperado

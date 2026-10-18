@@ -52,7 +52,8 @@ Invoke-Step 'Flex (lexer)' $flex @(
 Invoke-Step 'GCC (compilador.exe)' $gcc @(
     '-std=gnu11', '-Wall', '-Wextra', '-Isrc', '-Ibuild',
     '-o', 'build/compilador.exe',
-    'src/main.c', 'src/ast.c', 'src/errors.c', 'build/parser.tab.c', 'build/lex.yy.c'
+    'src/main.c', 'src/ast.c', 'src/errors.c', 'src/symtab.c', 'src/semantic.c',
+    'build/parser.tab.c', 'build/lex.yy.c'
 )
 
 Invoke-Step 'GCC (lexer_test.exe, herramienta de prueba del lexer)' $gcc @(
@@ -73,5 +74,12 @@ Invoke-Step 'GCC (symtab_test.exe, herramienta de prueba de la tabla de simbolos
     'tests/tools/symtab_driver.c', 'src/symtab.c'
 )
 
+Invoke-Step 'GCC (semantic_test.exe, herramienta de prueba de la semantica)' $gcc @(
+    '-std=gnu11', '-Wall', '-Wextra', '-Isrc', '-Ibuild',
+    '-o', 'build/semantic_test.exe',
+    'tests/tools/semantic_driver.c', 'src/semantic.c', 'src/symtab.c', 'src/ast.c', 'src/errors.c',
+    'build/parser.tab.c', 'build/lex.yy.c'
+)
+
 Write-Host ''
-Write-Host 'Compilacion exitosa: build\compilador.exe, lexer_test.exe, ast_test.exe y symtab_test.exe'
+Write-Host 'Compilacion exitosa: compilador.exe, lexer_test.exe, ast_test.exe, symtab_test.exe y semantic_test.exe (en build\)'

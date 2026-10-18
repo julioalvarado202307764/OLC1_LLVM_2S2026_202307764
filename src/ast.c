@@ -179,7 +179,7 @@ static void imprimir_decimal(FILE *salida, double valor)
     }
 }
 
-static void imprimir_nodo(const Nodo *nodo, FILE *salida, int nivel, int con_posiciones)
+static void imprimir_nodo(const Nodo *nodo, FILE *salida, int nivel, int opciones)
 {
     int i;
 
@@ -190,7 +190,7 @@ static void imprimir_nodo(const Nodo *nodo, FILE *salida, int nivel, int con_pos
         fputs("Programa\n", salida);
         for (i = 0; i < nodo->u.programa.cantidad; i++) {
             imprimir_nodo(nodo->u.programa.instrucciones[i], salida, nivel + 1,
-                          con_posiciones);
+                          opciones);
         }
         return;
     case NODO_LET:
@@ -214,30 +214,33 @@ static void imprimir_nodo(const Nodo *nodo, FILE *salida, int nivel, int con_pos
         break;
     }
 
-    if (con_posiciones) {
+    if ((opciones & AST_TIPOS) && nodo->tipo_dato != TIPO_DESCONOCIDO) {
+        fprintf(salida, " : %s", tipo_nombre(nodo->tipo_dato));
+    }
+    if (opciones & AST_POSICIONES) {
         fprintf(salida, " @%d:%d", nodo->linea, nodo->columna);
     }
     fputc('\n', salida);
 
     switch (nodo->tipo) {
     case NODO_LET:
-        imprimir_nodo(nodo->u.let.expresion, salida, nivel + 1, con_posiciones);
+        imprimir_nodo(nodo->u.let.expresion, salida, nivel + 1, opciones);
         break;
     case NODO_PRINT:
-        imprimir_nodo(nodo->u.print.expresion, salida, nivel + 1, con_posiciones);
+        imprimir_nodo(nodo->u.print.expresion, salida, nivel + 1, opciones);
         break;
     case NODO_BINARIO:
-        imprimir_nodo(nodo->u.binario.izq, salida, nivel + 1, con_posiciones);
-        imprimir_nodo(nodo->u.binario.der, salida, nivel + 1, con_posiciones);
+        imprimir_nodo(nodo->u.binario.izq, salida, nivel + 1, opciones);
+        imprimir_nodo(nodo->u.binario.der, salida, nivel + 1, opciones);
         break;
     default:
         break;
     }
 }
 
-void ast_imprimir(const Nodo *raiz, FILE *salida, int con_posiciones)
+void ast_imprimir(const Nodo *raiz, FILE *salida, int opciones)
 {
     if (raiz != NULL) {
-        imprimir_nodo(raiz, salida, 0, con_posiciones);
+        imprimir_nodo(raiz, salida, 0, opciones);
     }
 }

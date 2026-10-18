@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     fclose(yyin);
 
     if (estado == 0 && ast_programa != NULL) {
-        ast_imprimir(ast_programa, stdout, con_posiciones);
+        ast_imprimir(ast_programa, stdout, con_posiciones ? AST_POSICIONES : 0);
     }
 
     ast_liberar(ast_programa);
