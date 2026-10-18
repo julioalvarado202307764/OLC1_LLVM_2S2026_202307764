@@ -1,0 +1,18 @@
+# Artefactos de compilacion
+build/
+*.o
+*.obj
+*.exe
+
+# Archivos generados por Flex y Bison
+lex.yy.c
+parser.tab.c
+parser.tab.h
+*.output
+
+# Temporales
+*.tmp
+*.log
+
+# Editor
+.vscode/
