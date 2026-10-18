@@ -1,8 +1,10 @@
 #include <stdio.h>
 
+#include "ast.h"
 #include "errors.h"
 
 extern FILE *yyin;
+extern Nodo *ast_programa;
 int yyparse(void);
 
 int main(int argc, char **argv)
@@ -25,9 +27,14 @@ int main(int argc, char **argv)
 
     if (estado != 0 || error_total() > 0) {
         fprintf(stderr, "Analisis fallido: %d error(es).\n", error_total());
+        ast_liberar(ast_programa);
+        ast_programa = NULL;
         return 1;
     }
 
+    /* Las fases siguientes usaran el AST aqui (semantica y LLVM IR). */
     printf("Analisis sintactico exitoso.\n");
+    ast_liberar(ast_programa);
+    ast_programa = NULL;
     return 0;
 }

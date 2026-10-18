@@ -52,7 +52,7 @@ Invoke-Step 'Flex (lexer)' $flex @(
 Invoke-Step 'GCC (compilador.exe)' $gcc @(
     '-std=gnu11', '-Wall', '-Wextra', '-Isrc', '-Ibuild',
     '-o', 'build/compilador.exe',
-    'src/main.c', 'src/errors.c', 'build/parser.tab.c', 'build/lex.yy.c'
+    'src/main.c', 'src/ast.c', 'src/errors.c', 'build/parser.tab.c', 'build/lex.yy.c'
 )
 
 Invoke-Step 'GCC (lexer_test.exe, herramienta de prueba del lexer)' $gcc @(
@@ -61,5 +61,11 @@ Invoke-Step 'GCC (lexer_test.exe, herramienta de prueba del lexer)' $gcc @(
     'tests/tools/lexer_driver.c', 'src/errors.c', 'build/lex.yy.c'
 )
 
+Invoke-Step 'GCC (ast_test.exe, herramienta de prueba del AST)' $gcc @(
+    '-std=gnu11', '-Wall', '-Wextra', '-Isrc', '-Ibuild',
+    '-o', 'build/ast_test.exe',
+    'tests/tools/ast_driver.c', 'src/ast.c', 'src/errors.c', 'build/parser.tab.c', 'build/lex.yy.c'
+)
+
 Write-Host ''
-Write-Host 'Compilacion exitosa: build\compilador.exe y build\lexer_test.exe'
+Write-Host 'Compilacion exitosa: build\compilador.exe, build\lexer_test.exe y build\ast_test.exe'
