@@ -49,11 +49,17 @@ Invoke-Step 'Flex (lexer)' $flex @(
     '-o', 'build/lex.yy.c', 'src/lexer.l'
 )
 
-Invoke-Step 'GCC (compilar y enlazar)' $gcc @(
+Invoke-Step 'GCC (compilador.exe)' $gcc @(
     '-std=gnu11', '-Wall', '-Wextra', '-Isrc', '-Ibuild',
     '-o', 'build/compilador.exe',
-    'src/main.c', 'build/parser.tab.c', 'build/lex.yy.c'
+    'src/main.c', 'src/errors.c', 'build/parser.tab.c', 'build/lex.yy.c'
+)
+
+Invoke-Step 'GCC (lexer_test.exe, herramienta de prueba del lexer)' $gcc @(
+    '-std=gnu11', '-Wall', '-Wextra', '-Isrc', '-Ibuild',
+    '-o', 'build/lexer_test.exe',
+    'tests/tools/lexer_driver.c', 'src/errors.c', 'build/lex.yy.c'
 )
 
 Write-Host ''
-Write-Host 'Compilacion exitosa: build\compilador.exe'
+Write-Host 'Compilacion exitosa: build\compilador.exe y build\lexer_test.exe'

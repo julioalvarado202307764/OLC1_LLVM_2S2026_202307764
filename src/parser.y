@@ -1,30 +1,68 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "errors.h"
 
 int yylex(void);
 void yyerror(const char *mensaje);
-extern int yylineno;
 %}
 
-%define api.value.type {int}
+%locations
 %define parse.error verbose
 
-%token ENTERO
+%union {
+    int    ival;
+    double dval;
+    char  *sval;
+}
+
+%token LET PRINT
+%token <sval> ID
+%token <ival> ENTERO
+%token <dval> DECIMAL
+
+%destructor { free($$); } <sval>
 
 %%
 
-entrada
-    : expresion ';'          { printf("Resultado de humo: %d\n", $1); }
+programa
+    : instrucciones
+    ;
+
+instrucciones
+    : instrucciones instruccion
+    | instruccion
+    ;
+
+instruccion
+    : LET ID '=' expresion ';'   { free($2); }
+    | PRINT expresion ';'
     ;
 
 expresion
-    : expresion '+' ENTERO   { $$ = $1 + $3; }
-    | ENTERO                 { $$ = $1; }
+    : expresion '+' termino
+    | expresion '-' termino
+    | termino
+    ;
+
+termino
+    : termino '*' factor
+    | termino '/' factor
+    | factor
+    ;
+
+factor
+    : ENTERO                     { }
+    | DECIMAL                    { }
+    | ID                         { free($1); }
+    | '(' expresion ')'
     ;
 
 %%
 
 void yyerror(const char *mensaje)
 {
-    fprintf(stderr, "Error sintactico en linea %d: %s\n", yylineno, mensaje);
+    error_reportar(ERR_SINTACTICO, yylloc.first_line, yylloc.first_column,
+                   "%s", mensaje);
 }

@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "errors.h"
+
 extern FILE *yyin;
 int yyparse(void);
 
@@ -21,8 +23,8 @@ int main(int argc, char **argv)
     estado = yyparse();
     fclose(yyin);
 
-    if (estado != 0) {
-        fprintf(stderr, "Analisis sintactico fallido.\n");
+    if (estado != 0 || error_total() > 0) {
+        fprintf(stderr, "Analisis fallido: %d error(es).\n", error_total());
         return 1;
     }
 
