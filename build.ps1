@@ -67,5 +67,11 @@ Invoke-Step 'GCC (ast_test.exe, herramienta de prueba del AST)' $gcc @(
     'tests/tools/ast_driver.c', 'src/ast.c', 'src/errors.c', 'build/parser.tab.c', 'build/lex.yy.c'
 )
 
+Invoke-Step 'GCC (symtab_test.exe, herramienta de prueba de la tabla de simbolos)' $gcc @(
+    '-std=gnu11', '-Wall', '-Wextra', '-Isrc',
+    '-o', 'build/symtab_test.exe',
+    'tests/tools/symtab_driver.c', 'src/symtab.c'
+)
+
 Write-Host ''
-Write-Host 'Compilacion exitosa: build\compilador.exe, build\lexer_test.exe y build\ast_test.exe'
+Write-Host 'Compilacion exitosa: build\compilador.exe, lexer_test.exe, ast_test.exe y symtab_test.exe'
