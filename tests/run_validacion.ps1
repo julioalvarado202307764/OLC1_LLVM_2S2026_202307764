@@ -79,7 +79,7 @@ function Compilar([string]$Id, [string]$Fuente) {
 
 # Pasa un .ll por llvm-as (ensambla y verifica) y por opt -passes=verify.
 function ValidarConLlvm([string]$Ll) {
-    $bc = [System.IO.Path]::ChangeExtension($Ll, '.bc')
+    $bc = Join-Path $Tmp ([System.IO.Path]::GetFileNameWithoutExtension($Ll) + '.bc')
     $a = Ejecutar $LlvmAs ('"' + $Ll + '" -o "' + $bc + '"')
     $o = Ejecutar $Opt ('-passes=verify -disable-output "' + $Ll + '"')
     return @{ AsCodigo = $a.Codigo; AsErr = $a.Err; OptCodigo = $o.Codigo; OptErr = $o.Err }

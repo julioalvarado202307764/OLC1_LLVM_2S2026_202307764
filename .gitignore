@@ -16,3 +16,6 @@ parser.tab.h
 
 # Editor
 .vscode/
+
+# Bitcode generado por llvm-as
+*.bc
