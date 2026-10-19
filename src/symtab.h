@@ -13,6 +13,9 @@ typedef struct {
     int columna;
     const Nodo *inicializador;  /* expresion del AST con la que se declaro;
                                    la tabla no es duena de ese nodo */
+    char *operando;             /* operando LLVM (literal o %tN) que representa
+                                   a la variable en el IR; NULL hasta que lo
+                                   asigna el generador de codigo */
 } Simbolo;
 
 /* Entorno unico global. Conserva el orden de insercion. */
@@ -31,9 +34,14 @@ void tabla_liberar(TablaSimbolos *tabla);
 const Simbolo *tabla_buscar(const TablaSimbolos *tabla, const char *nombre);
 
 /* Inserta un simbolo copiando el nombre. Devuelve NULL, sin insertar nada,
-   si ya existe uno con ese nombre. */
+   si ya existe uno con ese nombre. El operando empieza en NULL. */
 Simbolo *tabla_insertar(TablaSimbolos *tabla, const char *nombre, TipoDato tipo,
                         int linea, int columna, const Nodo *inicializador);
+
+/* Copia el texto del operando en el simbolo (reemplaza el anterior, si habia).
+   Devuelve 1 si el simbolo existe y 0 si no existe. */
+int tabla_asignar_operando(TablaSimbolos *tabla, const char *nombre,
+                           const char *operando);
 
 int tabla_cantidad(const TablaSimbolos *tabla);
 

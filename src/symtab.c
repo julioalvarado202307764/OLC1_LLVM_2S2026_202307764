@@ -31,6 +31,7 @@ void tabla_liberar(TablaSimbolos *tabla)
 
     for (i = 0; i < tabla->cantidad; i++) {
         free(tabla->simbolos[i]->nombre);
+        free(tabla->simbolos[i]->operando);
         free(tabla->simbolos[i]);
         simbolos_vivos--;
     }
@@ -77,11 +78,32 @@ Simbolo *tabla_insertar(TablaSimbolos *tabla, const char *nombre, TipoDato tipo,
     simbolo->linea = linea;
     simbolo->columna = columna;
     simbolo->inicializador = inicializador;
+    simbolo->operando = NULL;
 
     tabla->simbolos[tabla->cantidad] = simbolo;
     tabla->cantidad++;
     simbolos_vivos++;
     return simbolo;
+}
+
+int tabla_asignar_operando(TablaSimbolos *tabla, const char *nombre,
+                           const char *operando)
+{
+    int i;
+
+    for (i = 0; i < tabla->cantidad; i++) {
+        Simbolo *simbolo = tabla->simbolos[i];
+
+        if (strcmp(simbolo->nombre, nombre) == 0) {
+            char *copia = reservar(strlen(operando) + 1);
+
+            strcpy(copia, operando);
+            free(simbolo->operando);
+            simbolo->operando = copia;
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int tabla_cantidad(const TablaSimbolos *tabla)

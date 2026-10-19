@@ -56,6 +56,7 @@ int main(int argc, char **argv)
         char comando[32];
         char nombre[128];
         char tipo_texto[32];
+        char operando[128];
         int fila;
         int col;
         TipoDato tipo;
@@ -87,6 +88,27 @@ int main(int argc, char **argv)
                        encontrado->columna);
             } else {
                 printf("NO_ENCONTRADO %s\n", nombre);
+            }
+        } else if (strcmp(comando, "asignar") == 0) {
+            if (sscanf(linea, "%*s %127s %127s", nombre, operando) != 2) {
+                return comando_invalido(numero, &tabla, archivo);
+            }
+            if (tabla_asignar_operando(&tabla, nombre, operando)) {
+                printf("ASIGNADO %s\n", nombre);
+            } else {
+                printf("NO_ENCONTRADO %s\n", nombre);
+            }
+        } else if (strcmp(comando, "operando") == 0) {
+            if (sscanf(linea, "%*s %127s", nombre) != 1) {
+                return comando_invalido(numero, &tabla, archivo);
+            }
+            encontrado = tabla_buscar(&tabla, nombre);
+            if (encontrado == NULL) {
+                printf("NO_ENCONTRADO %s\n", nombre);
+            } else if (encontrado->operando == NULL) {
+                printf("SIN_OPERANDO %s\n", nombre);
+            } else {
+                printf("OPERANDO %s %s\n", nombre, encontrado->operando);
             }
         } else if (strcmp(comando, "volcar") == 0) {
             tabla_imprimir(&tabla, stdout);

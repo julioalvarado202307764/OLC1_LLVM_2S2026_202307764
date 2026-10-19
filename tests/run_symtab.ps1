@@ -1,4 +1,4 @@
-# run_symtab.ps1 - Pruebas de la tabla de simbolos (CP4a, Fase 4).
+# run_symtab.ps1 - Pruebas de la tabla de simbolos (CP4a y CP5a-1).
 # Usa build\symtab_test.exe, que ejecuta comandos sobre la tabla.
 # Uso (desde la raiz del proyecto, despues de build.ps1):
 #   powershell -ExecutionPolicy Bypass -File .\tests\run_symtab.ps1
@@ -82,7 +82,23 @@ $casos = @(
 
     @{ Id = 'ST09'; Desc = 'la busqueda no acepta prefijos';
        Fuente = "insertar ab i32 1 1`nbuscar a`nbuscar abc";
-       Salida = @("INSERTADO ab", "NO_ENCONTRADO a", "NO_ENCONTRADO abc", "SIMBOLOS_VIVOS=0") }
+       Salida = @("INSERTADO ab", "NO_ENCONTRADO a", "NO_ENCONTRADO abc", "SIMBOLOS_VIVOS=0") },
+
+    @{ Id = 'ST10'; Desc = 'el operando empieza sin asignar';
+       Fuente = "insertar a i32 1 1`noperando a";
+       Salida = @("INSERTADO a", "SIN_OPERANDO a", "SIMBOLOS_VIVOS=0") },
+
+    @{ Id = 'ST11'; Desc = 'asignar y leer el operando';
+       Fuente = "insertar a i32 1 1`nasignar a %t1`noperando a";
+       Salida = @("INSERTADO a", "ASIGNADO a", "OPERANDO a %t1", "SIMBOLOS_VIVOS=0") },
+
+    @{ Id = 'ST12'; Desc = 'reasignar el operando reemplaza al anterior';
+       Fuente = "insertar a i32 1 1`nasignar a 10`nasignar a %t2`noperando a";
+       Salida = @("INSERTADO a", "ASIGNADO a", "ASIGNADO a", "OPERANDO a %t2", "SIMBOLOS_VIVOS=0") },
+
+    @{ Id = 'ST13'; Desc = 'asignar u obtener el operando de un simbolo inexistente';
+       Fuente = "asignar x 10`noperando x";
+       Salida = @("NO_ENCONTRADO x", "NO_ENCONTRADO x", "SIMBOLOS_VIVOS=0") }
 )
 
 $aprobadas = 0
