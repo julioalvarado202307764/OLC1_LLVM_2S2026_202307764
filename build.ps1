@@ -52,7 +52,7 @@ Invoke-Step 'Flex (lexer)' $flex @(
 Invoke-Step 'GCC (compilador.exe)' $gcc @(
     '-std=gnu11', '-Wall', '-Wextra', '-Isrc', '-Ibuild',
     '-o', 'build/compilador.exe',
-    'src/main.c', 'src/ast.c', 'src/errors.c', 'src/symtab.c', 'src/semantic.c',
+    'src/main.c', 'src/ast.c', 'src/errors.c', 'src/symtab.c', 'src/semantic.c', 'src/codegen.c',
     'build/parser.tab.c', 'build/lex.yy.c'
 )
 

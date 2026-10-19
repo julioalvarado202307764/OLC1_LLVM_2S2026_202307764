@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "ast.h"
+#include "codegen.h"
 #include "errors.h"
 #include "semantic.h"
 #include "symtab.h"
@@ -9,19 +11,68 @@ extern FILE *yyin;
 extern Nodo *ast_programa;
 int yyparse(void);
 
-int main(int argc, char **argv)
+static int uso(const char *programa)
 {
-    int estado;
-    TablaSimbolos tabla;
+    fprintf(stderr, "Uso: %s <entrada.olc> [-o <salida.ll>]\n", programa);
+    return 2;
+}
 
-    if (argc != 2) {
-        fprintf(stderr, "Uso: %s <archivo>\n", argv[0]);
+/* Escribe el IR en la ruta indicada. Devuelve 0 si todo salio bien, 1 si fallo
+   la generacion (el archivo parcial se elimina) y 2 si no se pudo abrir. */
+static int escribir_ir(const char *ruta, const Nodo *programa, TablaSimbolos *tabla)
+{
+    FILE *archivo = fopen(ruta, "wb");
+    int fallo;
+
+    if (archivo == NULL) {
+        perror(ruta);
         return 2;
     }
 
-    yyin = fopen(argv[1], "r");
+    fallo = codegen_generar(programa, tabla, archivo);
+    if (fclose(archivo) != 0) {
+        fallo = 1;
+    }
+
+    if (fallo) {
+        fprintf(stderr, "Error al generar el LLVM IR.\n");
+        remove(ruta);
+        return 1;
+    }
+
+    printf("LLVM IR generado en %s\n", ruta);
+    return 0;
+}
+
+int main(int argc, char **argv)
+{
+    const char *entrada = NULL;
+    const char *salida = NULL;
+    int estado;
+    int resultado = 0;
+    int i;
+    TablaSimbolos tabla;
+
+    for (i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-o") == 0) {
+            if (i + 1 >= argc || salida != NULL) {
+                return uso(argv[0]);
+            }
+            i++;
+            salida = argv[i];
+        } else if (entrada == NULL) {
+            entrada = argv[i];
+        } else {
+            return uso(argv[0]);
+        }
+    }
+    if (entrada == NULL) {
+        return uso(argv[0]);
+    }
+
+    yyin = fopen(entrada, "r");
     if (yyin == NULL) {
-        perror(argv[1]);
+        perror(entrada);
         return 2;
     }
 
@@ -52,9 +103,12 @@ int main(int argc, char **argv)
 
     printf("Analisis semantico exitoso.\n");
 
-    /* La Fase 5 generara aqui el LLVM IR a partir del AST y de la tabla. */
+    if (salida != NULL) {
+        resultado = escribir_ir(salida, ast_programa, &tabla);
+    }
+
     tabla_liberar(&tabla);
     ast_liberar(ast_programa);
     ast_programa = NULL;
-    return 0;
+    return resultado;
 }
