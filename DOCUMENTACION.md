@@ -630,3 +630,31 @@ llc -mtriple=thumbv6m-none-eabi -mcpu=cortex-m0plus -filetype=obj .\salida.ll -o
 ```
 
 El enlace, la carga y la observación de la salida serial se realizan con los archivos de soporte y el mecanismo que proporcione el docente.
+---
+
+## 14. Pendientes que dependen del docente
+
+Estos puntos no se pueden resolver ni verificar sin el runtime, el hardware o la respuesta del docente. Se mantienen como pendientes.
+
+| Tema | Qué se observó | Qué falta confirmar |
+|---|---|---|
+| Función de entrada | El objeto define `main` como símbolo global | Si el runtime invoca `main` |
+| Firmas de `print_*` | El IR declara `print_i32(i32)` y `print_f64(double)` | Que coincidan con las del runtime |
+| Símbolo `__aeabi_unwind_cpp_pr0` | Queda sin resolver en todos los objetos | Si el enlace del laboratorio lo resuelve |
+| ABI de `print_f64` | El `double` se pasa en `r0:r1` | Que el runtime espere esa convención |
+| Enlace, carga y salida serial | No se intentó | Todo el procedimiento del docente |
+| Repositorio | | Visibilidad (público o privado) y procedimiento de entrega |
+
+Si el docente indica un nombre de entrada distinto de `main`, el cambio está en `src\codegen.c` (la línea que escribe `define i32 @main() {`). Habría que actualizar también la función `ArmarIr` de `tests\run_ir.ps1` y volver a generar los `.ll` de `ejemplos\`. Una hipótesis **sin probar** para `__aeabi_unwind_cpp_pr0` sería marcar `@main` como `nounwind` en el IR.
+
+### Plan para la evaluación presencial
+
+Para regenerar el IR y el objeto en el momento, desde la raíz del repositorio:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build.ps1
+.\build\compilador.exe .\ejemplos\area.olc -o .\salida.ll
+llc -mtriple=thumbv6m-none-eabi -mcpu=cortex-m0plus -filetype=obj .\salida.ll -o .\salida.o
+```
+
+El enlace, la carga y la observación de la salida serial se realizan con los archivos de soporte y el mecanismo que proporcione el docente.
