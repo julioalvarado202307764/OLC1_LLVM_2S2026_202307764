@@ -12,4 +12,7 @@
    Devuelve 0 si todo salio bien y distinto de 0 si hubo un fallo. */
 int codegen_generar(const Nodo *programa, TablaSimbolos *tabla, FILE *salida);
 
+/* Produce el mismo lenguaje e IR, pero define i32 @olc_program() para Pico. */
+int codegen_generar_pico(const Nodo *programa, TablaSimbolos *tabla, FILE *salida);
+
 #endif

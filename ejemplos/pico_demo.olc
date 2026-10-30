@@ -1,0 +1,6 @@
+let a = 10;
+let b = 20;
+print a + b * 2;
+let ancho = 10.5;
+let alto = 20.0;
+print ancho * alto;

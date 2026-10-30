@@ -159,7 +159,7 @@ static void generar_instruccion(const Nodo *nodo, Generador *g)
     }
 }
 
-int codegen_generar(const Nodo *programa, TablaSimbolos *tabla, FILE *salida)
+static int codegen_generar_interno(const Nodo *programa, TablaSimbolos *tabla, FILE *salida, int para_pico)
 {
     Generador g;
     int i;
@@ -176,7 +176,7 @@ int codegen_generar(const Nodo *programa, TablaSimbolos *tabla, FILE *salida)
     fputs("declare void @print_i32(i32)\n", salida);
     fputs("declare void @print_f64(double)\n", salida);
     fputs("\n", salida);
-    fputs("define i32 @main() {\n", salida);
+    fputs(para_pico ? "define i32 @olc_program() {\n" : "define i32 @main() {\n", salida);
     fputs("entry:\n", salida);
 
     for (i = 0; i < programa->u.programa.cantidad; i++) {
@@ -190,4 +190,15 @@ int codegen_generar(const Nodo *programa, TablaSimbolos *tabla, FILE *salida)
         return 1;
     }
     return 0;
+}
+/* Modo original intacto para las suites IR/OB y uso fuera de Pico. */
+int codegen_generar(const Nodo *programa, TablaSimbolos *tabla, FILE *salida)
+{
+    return codegen_generar_interno(programa, tabla, salida, 0);
+}
+
+/* Firmware: el punto de entrada main() pertenece al runtime de Pico. */
+int codegen_generar_pico(const Nodo *programa, TablaSimbolos *tabla, FILE *salida)
+{
+    return codegen_generar_interno(programa, tabla, salida, 1);
 }

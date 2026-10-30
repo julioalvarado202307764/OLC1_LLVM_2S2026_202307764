@@ -13,13 +13,13 @@ int yyparse(void);
 
 static int uso(const char *programa)
 {
-    fprintf(stderr, "Uso: %s <entrada.olc> [-o <salida.ll>]\n", programa);
+    fprintf(stderr, "Uso: %s <entrada.olc> [-o <salida.ll>] [--target pico]\n", programa);
     return 2;
 }
 
 /* Escribe el IR en la ruta indicada. Devuelve 0 si todo salio bien, 1 si fallo
    la generacion (el archivo parcial se elimina) y 2 si no se pudo abrir. */
-static int escribir_ir(const char *ruta, const Nodo *programa, TablaSimbolos *tabla)
+static int escribir_ir(const char *ruta, const Nodo *programa, TablaSimbolos *tabla, int para_pico)
 {
     FILE *archivo = fopen(ruta, "wb");
     int fallo;
@@ -29,7 +29,7 @@ static int escribir_ir(const char *ruta, const Nodo *programa, TablaSimbolos *ta
         return 2;
     }
 
-    fallo = codegen_generar(programa, tabla, archivo);
+    fallo = para_pico ? codegen_generar_pico(programa, tabla, archivo) : codegen_generar(programa, tabla, archivo);
     if (fclose(archivo) != 0) {
         fallo = 1;
     }
@@ -48,6 +48,7 @@ int main(int argc, char **argv)
 {
     const char *entrada = NULL;
     const char *salida = NULL;
+    int para_pico = 0;
     int estado;
     int resultado = 0;
     int i;
@@ -60,6 +61,12 @@ int main(int argc, char **argv)
             }
             i++;
             salida = argv[i];
+        } else if (strcmp(argv[i], "--target") == 0) {
+            if (para_pico || i + 1 >= argc || strcmp(argv[i + 1], "pico") != 0) {
+                return uso(argv[0]);
+            }
+            para_pico = 1;
+            i++;
         } else if (entrada == NULL) {
             entrada = argv[i];
         } else {
@@ -104,7 +111,7 @@ int main(int argc, char **argv)
     printf("Analisis semantico exitoso.\n");
 
     if (salida != NULL) {
-        resultado = escribir_ir(salida, ast_programa, &tabla);
+        resultado = escribir_ir(salida, ast_programa, &tabla, para_pico);
     }
 
     tabla_liberar(&tabla);
