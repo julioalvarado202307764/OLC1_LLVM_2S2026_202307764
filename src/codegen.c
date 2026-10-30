@@ -153,6 +153,10 @@ static void generar_instruccion(const Nodo *nodo, Generador *g)
         break;
     }
 
+    case NODO_BLINK:
+        fputs("  call void @olc_led_blink()\n", g->salida);
+        break;
+
     default:
         error_interno(g, "nodo que no es una instruccion");
         break;
@@ -172,6 +176,17 @@ static int codegen_generar_interno(const Nodo *programa, TablaSimbolos *tabla, F
     g.tabla = tabla;
     g.ultimo_temporal = 0;
     g.fallo = 0;
+
+    for (i = 0; i < programa->u.programa.cantidad; i++) {
+        if (programa->u.programa.instrucciones[i]->tipo == NODO_BLINK) {
+            if (!para_pico) {
+                fprintf(stderr, "Error: blink requiere --target pico.\n");
+                return 1;
+            }
+            fputs("declare void @olc_led_blink()\n", salida);
+            break;
+        }
+    }
 
     fputs("declare void @print_i32(i32)\n", salida);
     fputs("declare void @print_f64(double)\n", salida);

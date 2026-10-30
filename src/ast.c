@@ -69,6 +69,11 @@ Nodo *ast_print_nuevo(Nodo *expresion, int linea, int columna)
     return nodo;
 }
 
+Nodo *ast_blink_nuevo(int linea, int columna)
+{
+    return nodo_nuevo(NODO_BLINK, linea, columna);
+}
+
 Nodo *ast_binario_nuevo(Operador op, Nodo *izq, Nodo *der, int linea, int columna)
 {
     Nodo *nodo = nodo_nuevo(NODO_BINARIO, linea, columna);
@@ -134,6 +139,7 @@ void ast_liberar(Nodo *nodo)
         break;
     case NODO_ENTERO:
     case NODO_DECIMAL:
+    case NODO_BLINK:
         break;
     }
 
@@ -198,6 +204,9 @@ static void imprimir_nodo(const Nodo *nodo, FILE *salida, int nivel, int opcione
         break;
     case NODO_PRINT:
         fputs("Print", salida);
+        break;
+    case NODO_BLINK:
+        fputs("Blink", salida);
         break;
     case NODO_BINARIO:
         fprintf(salida, "Binario %s", ast_operador_simbolo(nodo->u.binario.op));

@@ -41,6 +41,7 @@ RESTO_ID   [A-Za-z0-9_]
 
 "let"                    { return LET; }
 "print"                  { return PRINT; }
+"blink"                  { return BLINK; }
 
 {INICIO_ID}{RESTO_ID}*   { yylval.sval = copiar_texto(yytext); return ID; }
 

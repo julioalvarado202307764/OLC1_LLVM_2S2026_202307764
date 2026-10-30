@@ -116,6 +116,8 @@ int semantico_analizar(Nodo *programa, TablaSimbolos *tabla)
             analizar_let(instruccion, tabla);
         } else if (instruccion->tipo == NODO_PRINT) {
             analizar_print(instruccion, tabla);
+        } else if (instruccion->tipo == NODO_BLINK) {
+            /* Sin operandos: no cambia la tabla ni requiere inferencia. */
         }
     }
 

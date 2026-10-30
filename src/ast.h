@@ -9,6 +9,7 @@ typedef enum {
     NODO_PROGRAMA,
     NODO_LET,
     NODO_PRINT,
+    NODO_BLINK,
     NODO_BINARIO,
     NODO_ENTERO,
     NODO_DECIMAL,
@@ -61,6 +62,7 @@ Nodo *ast_programa_nuevo(void);
 void  ast_programa_agregar(Nodo *programa, Nodo *instruccion);
 Nodo *ast_let_nuevo(char *nombre, Nodo *expresion, int linea, int columna);
 Nodo *ast_print_nuevo(Nodo *expresion, int linea, int columna);
+Nodo *ast_blink_nuevo(int linea, int columna);
 Nodo *ast_binario_nuevo(Operador op, Nodo *izq, Nodo *der, int linea, int columna);
 Nodo *ast_entero_nuevo(int valor, int linea, int columna);
 Nodo *ast_decimal_nuevo(double valor, int linea, int columna);

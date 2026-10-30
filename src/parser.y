@@ -27,7 +27,7 @@ Nodo *ast_programa = NULL;
     Nodo  *nodo;
 }
 
-%token LET PRINT
+%token LET PRINT BLINK
 %token <sval> ID
 %token <ival> ENTERO
 %token <dval> DECIMAL
@@ -56,6 +56,8 @@ instruccion
         { $$ = ast_let_nuevo($2, $4, @2.first_line, @2.first_column); }
     | PRINT expresion ';'
         { $$ = ast_print_nuevo($2, @1.first_line, @1.first_column); }
+    | BLINK ';'
+        { $$ = ast_blink_nuevo(@1.first_line, @1.first_column); }
     ;
 
 expresion
